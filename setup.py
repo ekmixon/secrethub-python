@@ -3,17 +3,15 @@ from sys import platform
 from codecs import open
 
 extra_obj_extension=''
-if platform == "linux" or platform == "linux2":
+if platform in ["linux", "linux2"]:
     extra_obj_extension = '.so'
 elif platform == "darwin":
     extra_obj_extension = '.dylib'
 elif platform == "win32":
     extra_obj_extension = '.lib'
 
-readme = open('README.md', 'r')
-readme_contents = readme.read()
-readme.close()
-
+with open('README.md', 'r') as readme:
+    readme_contents = readme.read()
 setup(
     name="secrethub",
     version="0.1.1",
@@ -25,7 +23,13 @@ setup(
     long_description=readme_contents,
     long_description_content_type="text/markdown",
     url="https://secrethub.io/",
-    ext_modules=[Extension('secrethub._secrethub', ['secrethub/secrethub.i'], extra_objects=['secrethub/Client'+extra_obj_extension])],
+    ext_modules=[
+        Extension(
+            'secrethub._secrethub',
+            ['secrethub/secrethub.i'],
+            extra_objects=[f'secrethub/Client{extra_obj_extension}'],
+        )
+    ],
     packages=['secrethub'],
     classifiers=[
         "Development Status :: 4 - Beta",
